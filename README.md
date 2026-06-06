@@ -43,14 +43,15 @@ Contains the system headers, state-estimation mathematical dependencies, and cal
 
 ---
 
-## 3. Demonstration Videos & Sample Datasets
+## 3. Sample Dataset
 
-Reviewers can evaluate the dynamic performance of our proposed system through the following provided materials:
+To assist reviewers in verifying the authenticity of our real-world experiments without exceeding storage limits, we have provided a representative sample dataset from our field tests.
 
-* 🎥 **Real-world Navigation Video:** [Insert your anonymous Google Drive / YouTube video link here]
-* 📦 **Sample ROS Bag / Datasets:** [Insert your anonymous dataset cloud drive link here, or delete this line if not applicable]
+* 📦 **Sample ROS Bag (Straight-Line-0.2):** [https://drive.google.com/file/d/1xAxKd2RzwZJSzw48yX8yVTadO8iQPJ0n/view?usp=sharing]
+  *(This sample bag contains the synchronized 3D LiDAR, 10-axis IMU, and RTK GNSS streams. The remaining 7 datasets encompassing more extreme scenarios will be fully released upon publication.)*
 
-> *Note: For evaluating the Python scripts locally, please ensure you update the `BAG_FILE_PATH` or `TRAJ_FILE` variables inside the scripts to match your local directory paths.*
+> **Note on Demonstration Video:** 
+> Due to the presence of prominent university logos and identifying markers on the physical UGV chassis, the demonstration video has been temporarily withheld to strictly enforce the double-blind review policy.
 
 ---
 
