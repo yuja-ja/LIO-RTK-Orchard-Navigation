@@ -1,0 +1,55 @@
+<launch>
+    <env name="LD_LIBRARY_PATH" value="/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:$(env LD_LIBRARY_PATH)" />
+    <arg name="rviz" default="true" />
+
+    <node pkg="map_server" type="map_server" name="map_server" 
+          args="$(find fast_lio_navigation)/maps/orchard_map.yaml" output="screen">
+    </node>
+    
+    <!-- 1. 启动你写的底盘控制节点 -->
+    <node pkg="fast_lio_navigation" type="velocity_controller_node" name="velocity_controller_node" output="screen">
+        <param name="serial_port" value="/dev/ttyUSB1" />
+        <param name="serial_baud_rate" value="115200" />
+        <param name="cmd_vel_topic" value="/cmd_vel" />
+        <param name="angular_k" value="-0.003" />
+        <param name="angular_b" value="0.0" />
+
+    </node>
+
+    <!-- 2. 启动 move_base 节点 -->
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        
+        <!-- 配置全局和局部规划器 -->
+        <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+        <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+
+        <!-- 规划器频率 -->
+        <param name="controller_frequency" value="5.0" />
+        <param name="planner_frequency" value="2.0" />
+
+        <!-- 加载 YAML 配置文件 -->
+        <rosparam file="$(find fast_lio_navigation)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find fast_lio_navigation)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find fast_lio_navigation)/param/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find fast_lio_navigation)/param/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find fast_lio_navigation)/param/teb_local_planner_params.yaml" command="load" />
+        
+        <!-- 将点云话题映射给代价地图使用 -->
+        <remap from="cmd_vel" to="/cmd_vel"/>
+        <remap from="odom" to="/Odometry"/> <!-- 映射 FAST-LIO 发布的里程计话题 -->
+    </node>
+
+    <!-- 3. 启动 RViz (可选) -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find fast_lio_navigation)/rviz_cfg/nav.rviz" />
+    <!-- 4. [新增] 启动你刚才编写的 C++ 版 APP 桥接节点                     -->
+    <node pkg="fast_lio_navigation" type="app_ros_bridge_node" name="app_ros_bridge_node" output="screen">
+        <!-- 填写之前在 rtk_driver_node 中生成并保存的 map_origin 文件的绝对路径 -->
+        <param name="origin_file" value="/home/gsm/LIO-RTK/src/FAST_LIO-RTK/PCD/map_origin.txt" />
+    </node>
+    <!-- ================= 新增：启动 ROSBridge 供手机 APP 连接 ================= -->
+    <!-- <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" /> -->
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+        <arg name="port" value="9090" />
+    </include>
+    
+</launch>

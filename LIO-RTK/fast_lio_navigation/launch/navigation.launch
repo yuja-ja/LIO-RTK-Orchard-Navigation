@@ -1,0 +1,42 @@
+<launch>
+    <env name="LD_LIBRARY_PATH" value="/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:$(env LD_LIBRARY_PATH)" />
+    <arg name="rviz" default="true" />
+
+    <node pkg="map_server" type="map_server" name="map_server" 
+          args="$(find fast_lio_navigation)/maps/orchard_map.yaml" output="screen">
+    </node>
+    <!-- 1. 启动你写的底盘控制节点 -->
+    <node pkg="fast_lio_navigation" type="velocity_controller_node" name="velocity_controller_node" output="screen">
+        <param name="serial_port" value="/dev/ttyUSB0" />
+        <param name="serial_baud_rate" value="115200" />
+        <param name="cmd_vel_topic" value="/cmd_vel" />
+    </node>
+
+    <!-- 2. 启动 move_base 节点 -->
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        
+        <!-- 配置全局和局部规划器 -->
+        <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+        <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+
+        <!-- 规划器频率 -->
+        <param name="controller_frequency" value="10.0" />
+        <param name="planner_frequency" value="2.0" />
+
+        <!-- 加载 YAML 配置文件 -->
+        <!-- 注意：请将 'your_package_name' 替换为存放 yaml 文件的实际功能包名 -->
+        <rosparam file="$(find fast_lio_navigation)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find fast_lio_navigation)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find fast_lio_navigation)/param/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find fast_lio_navigation)/param/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find fast_lio_navigation)/param/dwa_local_planner_params.yaml" command="load" />
+        
+        <!-- 将点云话题映射给代价地图使用 -->
+        <remap from="cmd_vel" to="/cmd_vel"/>
+        <remap from="odom" to="/Odometry"/> <!-- 映射 FAST-LIO 发布的里程计话题 -->
+    </node>
+    <!-- 4. 启动 RViz (可选) -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find fast_lio_navigation)/rviz_cfg/nav.rviz" />
+
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+</launch>

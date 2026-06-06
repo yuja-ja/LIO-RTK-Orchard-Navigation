@@ -1,0 +1,13 @@
+GlobalPlanner:
+  allow_unknown: false        # 不允许在未知区域规划路径
+  default_tolerance: 0.2      # 允许偏离目标的公差
+  visualize_potential: true   # 可视化势场（在RViz中可以看全局规划是怎么蔓延的）
+  use_dijkstra: true          # 核心！使用Dijkstra代替A*，寻找全图绝对最优解，而不是贴墙走
+  use_quadratic: true         # 使用二次函数计算势场，路径更平滑
+  use_grid_path: false        # 如果设为true，路径会是直角折线；设为false则是平滑曲线
+  old_navfn_behavior: false   # 不使用老旧的 navfn 逻辑
+  
+  # 下面三个参数是“强制让履带车走在果树正中间”的核心！
+  lethal_cost: 253            # 致命代价值（撞墙）
+  neutral_cost: 50            # 自由空间的基础代价值（可以适当调高，让规划器对距离更敏感）
+  cost_factor: 3.0            # 核心！乘积因子。调高这个值，规划器会极度厌恶靠近障碍物（果树），从而被迫走在两排树的最中间！

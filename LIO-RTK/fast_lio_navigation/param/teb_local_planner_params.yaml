@@ -1,0 +1,66 @@
+TebLocalPlannerROS:
+  odom_topic: /Odometry
+  map_frame: odom
+  
+  # 速度
+  max_vel_x: 0.6
+  max_vel_x_backwards: 0.02
+  max_vel_theta: 2.0
+  acc_lim_x: 0.5
+  acc_lim_theta: 2.0
+  
+  min_turning_radius: 0.0
+  max_vel_y: 0.0
+  acc_lim_y: 0.0
+  
+  footprint_model:
+    type: "polygon"
+    vertices: [[0.1, 0.475], [0.1, -0.475], [-1.35, -0.475], [-1.35, 0.475]]
+
+  # ==================== 关键优化：降低计算量 ====================
+  dt_ref: 0.3                 # [增大] 0.3→0.5，时间步长放宽，轨迹点更少
+  dt_hysteresis: 0.1
+  
+  max_global_plan_lookahead_dist: 4   # [减小] 4→3，局部规划只看全局路径3米内的部分
+  force_reinit_new_goal_dist: 0.3
+  
+  allow_init_with_backwards_motion: false
+  
+  penalty_epsilon: 0.01
+  # 障碍物处理轻量化
+  min_obstacle_dist: 0.2
+  inflation_dist: 0.5
+  include_costmap_obstacles: true
+  costmap_obstacles_behind_robot_dist: 0.3    # [减小] 只关心后方0.3米
+  obstacle_poses_affected: 10                 # [大幅减小] 20→10，只考虑最近10个障碍物
+  
+  # 禁用复杂功能
+  include_dynamic_obstacles: true   # 仍然使用 costmap 中的动态障碍物，但不进行复杂预测
+  legacy_obstacle_association: true  # 使用简单的最近邻关联，而不是复杂的预测
+  oscillation_recovery: true               # 启用振荡检测与恢复（防止原地打转）
+  oscillation_reset_dist: 0.05
+  oscillation_reset_angle: 0.2
+  shrink_horizon_backup: true
+  shrink_horizon_min_duration: 2
+  
+  # ==================== 优化器迭代次数（关键！）====================
+  no_inner_iterations: 4      # [减小] 5→3，内部优化次数
+  no_outer_iterations: 3      # [减小] 4→2，外部循环次数
+  
+  # 权重
+  weight_optimaltime: 5.0    # [减小] 20→10，收敛更快
+  weight_kinematics_forward_drive: 30.0
+  weight_kinematics_turning_radius: 0.1
+  weight_obstacle: 100.0       # [增大] 50→100，强烈避障
+  weight_inflation: 5.0        # [增大] 2→5，强烈避开膨胀区域
+  weight_viapoint: 10.0        # [增大] 5→10，更紧跟全局路径
+  
+  # 容差
+  xy_goal_tolerance: 0.2
+  yaw_goal_tolerance: 0.1
+  free_goal_vel: false
+  
+  exact_arc_length: true     # [改为false] 近似计算更快
+  feasibility_check_no_poses: 3   # [减小] 3→2
+  
+  publish_feedback: false    # [关闭] 不发布调试信息

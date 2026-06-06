@@ -1,0 +1,41 @@
+DWAPlannerROS:
+  # --- 机器人运动学限制 ---
+  max_vel_x: 0.5
+  min_vel_x: 0.0              # 建议设为0！让DWA只通过原地旋转掉头，而不是倒车，履带车倒车很容易引发规划振荡
+  max_vel_y: 0.0              # 履带车无法横向移动
+  min_vel_y: 0.0
+  
+  max_vel_trans: 0.5         # [原 0.8] 最大平移速度绝对值，必须和 max_vel_x 保持一致
+  min_vel_trans: 0.05         # [原 0.1] 最小平移速度，太小车可能动不起来，0.05差不多
+  
+  max_vel_theta: 1.0          # 履带车原地旋转能力强，可适当设大
+  min_vel_theta: 0.3          # 保证有最小旋转动力克服履带摩擦力
+
+  # 加速度限制
+  acc_lim_x: 1.0              # 履带车加减速不要太猛，容易打滑
+  acc_lim_y: 0.0
+  acc_lim_theta: 2.0
+  
+  # --- 目标容差 ---
+  xy_goal_tolerance: 0.20
+  yaw_goal_tolerance: 0.20    # 约 8.5 度
+  latch_xy_goal_tolerance: true
+  
+  # --- 前向模拟 ---
+  sim_time: 3.5               # 稍微延长预测时间，让车提前避障
+  vx_samples: 10              
+  vy_samples: 1               # 必须为1
+  vtheta_samples: 30          # 履带车转向多，增加角速度采样
+  
+  # --- 轨迹评分权重 ---
+  path_distance_bias: 32.0    # 紧贴全局路径
+  goal_distance_bias: 24.0    # 趋向目标
+  occdist_scale: 0.02         # 避障权重（如果车在窄门过不去，把这个调小）
+  forward_point_distance: 0.325
+  stop_time_buffer: 0.2
+  scaling_speed: 0.25
+  max_scaling_factor: 0.2
+  
+  # --- 其它 ---
+  holonomic_robot: false      # 设置为 false 代表非全向车（履带/两轮差速）
+  prune_plan: true

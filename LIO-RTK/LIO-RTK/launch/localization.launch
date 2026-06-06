@@ -1,0 +1,27 @@
+<launch>
+    <!-- Launch file for Velodyne Localization with RTK -->
+    <env name="LD_LIBRARY_PATH" value="/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:$(env LD_LIBRARY_PATH)" />
+
+    <!-- <arg name="rviz" default="true" /> -->
+
+    <rosparam command="load" file="$(find fast_lio)/config/localization.yaml" />
+
+    <param name="feature_extract_enable" type="bool" value="0"/>
+    <param name="point_filter_num" type="int" value="2"/>
+    <param name="max_iteration" type="int" value="3" />
+    <param name="filter_size_surf" type="double" value="0.2" />
+    <param name="filter_size_map" type="double" value="0.2" />
+    <param name="cube_side_length" type="double" value="400" />
+    <param name="runtime_pos_log_enable" type="bool" value="0" />
+
+    <param name="localization_en" type="bool" value="true" />
+    <param name="global_map_path" type="string" value="/home/gsm/LIO-RTK/src/FAST_LIO-RTK/PCD/scans.pcd" />
+
+    <!-- node 标签单独闭合，不再包裹任何参数 -->
+    <node pkg="fast_lio" type="fastlio_mapping" name="laserMapping" output="screen" /> 
+
+    <!-- <group if="$(arg rviz)">
+        <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find fast_lio)/rviz_cfg/localization.rviz" />
+    </group> -->
+
+</launch>

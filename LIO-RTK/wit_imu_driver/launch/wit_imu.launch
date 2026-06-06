@@ -1,0 +1,14 @@
+<launch>
+    <!-- 启动C++ IMU驱动节点 -->
+    <node pkg="wit_imu_driver" type="wit_imu_node" name="wit_imu_node" output="screen">
+        <!-- 参数：串口设备文件路径 -->
+        <!-- 运行前请用 ls /dev/tty* 命令确认您的IMU连接到了哪个tty设备 -->
+        <param name="port" value="/dev/ttyUSB2"/>
+        
+        <!-- 参数：串口波特率，必须与IMU模块设置的一致 -->
+        <param name="baud_rate" value="115200"/>
+
+        <!-- 参数：发布的IMU消息的坐标系名称 -->
+        <param name="frame_id" value="imu_link"/>
+    </node>
+</launch>

@@ -1,0 +1,6 @@
+<node pkg="rtk_driver" type="rtk_ground_truth_node" name="rtk_ground_truth_node" respawn="true" output="screen">
+  <param name="port" value="/dev/ttyUSB1"/>
+  <param name="baud" value="115200"/>
+  <param name="frame_id" value="world"/>
+  <param name="child_frame_id" value="base_link_gt"/>
+</node>

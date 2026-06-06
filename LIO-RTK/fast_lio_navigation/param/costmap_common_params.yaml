@@ -1,0 +1,49 @@
+# 这是一个针对履带车的代价地图配置文件，专门设计来配合 FAST-LIO 的点云数据。
+robot_base_frame: body
+transform_tolerance: 1.0
+
+# 履带车的外形，请实际测量你的车体长宽，单位：米
+# 前X后-X，左Y右-Y。
+footprint: [[0.1, 0.475], [0.1, -0.475], [-1.35, -0.475], [-1.35, 0.475]]
+
+# 膨胀半径（基于履带车边缘向外膨胀）
+inflation_radius: 1.0  # 1米的膨胀半径，适合履带车的宽度和避障需求
+cost_scaling_factor: 2.0  # 增大成本缩放因子，使得靠近障碍物的区域成本更高，促使机器人远离障碍物
+
+# 定义障碍物层，专门用来接收 FAST-LIO 的 3D 点云并投影到 2D
+obstacle_layer:
+  enabled: true
+  obstacle_range: 5.0    # 在 5 米内标记障碍物
+  raytrace_range: 6.0    # 在 6 米内清除自由空间
+  # observation_sources: point_cloud_sensor
+  observation_sources: point_cloud_mark point_cloud_clear
+  
+  # 1. 专门用于标记障碍物的数据源（严苛过滤，防止地面变墙）
+  point_cloud_mark:
+    sensor_frame: body
+    data_type: PointCloud2
+    topic: /cloud_registered_body
+    marking: true
+    clearing: false       # 关闭清除功能
+    min_obstacle_height: 0.15 
+    max_obstacle_height: 1.5
+
+  # 2. 专门用于清除空白区域的数据源（放宽高度，利用地面点做射线清除）
+  point_cloud_clear:
+    sensor_frame: body
+    data_type: PointCloud2
+    topic: /cloud_registered_body
+    marking: false        # 关闭标记功能
+    clearing: true
+    min_obstacle_height: -2.0  # 允许激光打到地面的点参与清除
+    max_obstacle_height: 2.0
+  # point_cloud_sensor:
+  #   sensor_frame: body
+  #   data_type: PointCloud2
+  #   topic: /cloud_registered_body  # FAST-LIO 发布的车体坐标系下的点云
+  #   marking: true
+  #   clearing: true
+  #   # 极度关键：因为履带车底盘低，过滤掉地面点防止把地面当墙
+  #   min_obstacle_height: 0.15 
+  #   # 过滤掉高于车体的点云（比如树冠、天花板）
+  #   max_obstacle_height: 1.5

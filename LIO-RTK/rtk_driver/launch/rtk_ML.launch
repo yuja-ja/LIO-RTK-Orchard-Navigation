@@ -1,0 +1,13 @@
+<launch>
+    <arg name="loc_mode" default="false" />
+    <node pkg="rtk_driver" type="rtk_driver_node" name="rtk_driver_node" respawn="true" output="screen">
+        <param name="port" value="/dev/ttyUSB0"/>
+        <param name="baud" value="115200" />
+        <param name="frame_id" value="laser_link" />
+        <param name="child_frame_id" value="rtk_link" />
+
+        <param name="localization_mode" value="$(arg loc_mode)" />
+        
+    </node>
+
+</launch>

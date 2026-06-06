@@ -1,0 +1,10 @@
+<launch>
+    <include file="$(find lslidar_driver)/launch/lslidar_c32.launch">
+    </include>
+
+    <node pkg="ls2velo" type="ls2velo_node" name="ls2velo_node" output="screen">
+                <remap from="/point_cloud_raw" to="/point_cloud_raw"/>
+        <remap from="/velodyne_points" to="/velodyne_points"/>
+    </node>
+
+</launch>
