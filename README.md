@@ -2,8 +2,6 @@
 
 This repository contains the system framework, configuration files, evaluation scripts, and semantic map outputs for the paper focusing on **robust LIO-RTK localization, semantic mapping, and autonomous navigation for tracked UGVs in non-standardized orchards**.
 
-> ⚠️ **Anonymous Notice:** This repository has been carefully sanitized and prepared to strictly comply with the **double-blind peer review** policy of the journal. 
-
 ---
 
 ## 1. Core Source Code Release Policy
@@ -51,8 +49,8 @@ To assist reviewers in verifying the authenticity of our real-world experiments 
   *(This sample bag contains the synchronized 3D LiDAR, 10-axis IMU, and RTK GNSS streams. The remaining 7 datasets encompassing more extreme scenarios will be fully released upon publication.)*
 
 > **Note on Demonstration Video:** 
-> Due to the presence of prominent university logos and identifying markers on the physical UGV chassis, the demonstration video has been temporarily withheld to strictly enforce the double-blind review policy.
+> The core algorithm demonstration and field navigation demonstration videos can be viewed at https://www.youtube.com/watch?v=52Jc8SSe3pU or https://www.bilibili.com/video/BV1WUEQ6TEqa?t=22.6. 
 
 ---
 
-*We deeply appreciate the reviewers' and editor's time, as well as their understanding regarding our IP protection strategy during this blind peer review phase.*
+*We deeply appreciate the reviewers' and editor's time.*
