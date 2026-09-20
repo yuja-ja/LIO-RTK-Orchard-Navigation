@@ -17,18 +17,6 @@ starting ROS. The recommended direct-observation set is:
 - `ZDA`: optional explicit UTC date/time for `sensor_msgs/TimeReference`.
 - `THS`: optional dual-antenna true heading on receivers that support it.
 
-For the document's `COM2` output at 10 Hz, enter these receiver commands with a
-serial assistant (they are not sent by this ROS node):
-
-```text
-GPGGA COM2 0.1
-GPGST COM2 0.1
-GPRMC COM2 0.1
-GPTHS COM2 0.1
-GPGSA COM2 1
-GPZDA COM2 1
-```
-
 ## Time semantics
 
 Measurement headers use ROS arrival time, not NMEA UTC. For each serial read,
