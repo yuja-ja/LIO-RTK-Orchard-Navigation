@@ -58,11 +58,11 @@ This repository contains the software modules for a LiDAR-inertial-RTK fusion lo
 ### 4.1. Fruit-Tree Instance Semantic Mapping 
 * Elevation-span analysis and local ground plane estimation
 * Local non-maximum suppression (NMS) for trunk centroid extraction
-* Generation of georeferenced fruit-tree coordinate catalogs (`tree_inventory.csv`)
+* Generation of georeferenced fruit-tree coordinate catalogs 
 
 ### 4.2. 3D Point-Cloud to 2D Costmap Conversion 
 * Elevation pass-band filtering to remove low ground weeds (0.00 – 0.15 m) and high canopies (> 1.20 m)
-* Generation of 2D static occupancy grid maps (`orchard_map.pgm`, `orchard_map.yaml`)
+* Generation of 2D static occupancy grid maps 
 
 ### 4.3. Fixed-Map Global Relocalization 
 * Read-only static ikd-Tree point-to-plane ICP registration
@@ -71,8 +71,8 @@ This repository contains the software modules for a LiDAR-inertial-RTK fusion lo
 ### 4.4. Hierarchical Autonomous Navigation 
 * Potential field reshaped global path planning for tree-row centerline guidance
 * Timed Elastic Band (TEB) local trajectory optimization with nonholonomic kinematic constraints
-* Chassis motor serial communication interface (`velocity_controller_node`)
-* Mobile terminal teleoperation bridge via WebSocket (`app_ros_bridge_node`)
+* Chassis motor serial communication interface 
+* Mobile terminal teleoperation bridge via WebSocket 
 
 ---
 
