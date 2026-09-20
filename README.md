@@ -44,7 +44,7 @@ This repository contains the software modules for a LiDAR-inertial-RTK fusion lo
 
 ---
 
-## 3. LIO-RTK State Estimation (`/LIO-RTK`)
+## 3. LIO-RTK State Estimation
 
 ### Asynchronous Sequential LIO-RTK Fusion Estimator
 * Direct point-to-plane residual formulation based on incremental kd-tree (ikd-Tree)
@@ -53,22 +53,22 @@ This repository contains the software modules for a LiDAR-inertial-RTK fusion lo
 
 ---
 
-## 4. Semantic Mapping, Relocalization & Navigation (`/导航`)
+## 4. Semantic Mapping, Relocalization & Navigation 
 
-### 4.1. Fruit-Tree Instance Semantic Mapping (`orchard_semantic_map`)
+### 4.1. Fruit-Tree Instance Semantic Mapping 
 * Elevation-span analysis and local ground plane estimation
 * Local non-maximum suppression (NMS) for trunk centroid extraction
 * Generation of georeferenced fruit-tree coordinate catalogs (`tree_inventory.csv`)
 
-### 4.2. 3D Point-Cloud to 2D Costmap Conversion (`pcd2gridmap`)
+### 4.2. 3D Point-Cloud to 2D Costmap Conversion 
 * Elevation pass-band filtering to remove low ground weeds (0.00 – 0.15 m) and high canopies (> 1.20 m)
 * Generation of 2D static occupancy grid maps (`orchard_map.pgm`, `orchard_map.yaml`)
 
-### 4.3. Fixed-Map Global Relocalization (`FAST_LIO-RTK`)
+### 4.3. Fixed-Map Global Relocalization 
 * Read-only static ikd-Tree point-to-plane ICP registration
 * Smooth coordinate frame decoupling between map and odometry frames
 
-### 4.4. Hierarchical Autonomous Navigation (`fast_lio_navigation`)
+### 4.4. Hierarchical Autonomous Navigation 
 * Potential field reshaped global path planning for tree-row centerline guidance
 * Timed Elastic Band (TEB) local trajectory optimization with nonholonomic kinematic constraints
 * Chassis motor serial communication interface (`velocity_controller_node`)
