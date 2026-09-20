@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="port" default="/dev/ttyUSB2"/>
+  <arg name="baud" default="115200"/>
+  <arg name="config" default="$(find nmea_rtk_driver)/config/nmea_rtk_driver.yaml"/>
+
+  <node pkg="nmea_rtk_driver"
+        type="nmea_rtk_driver_node"
+        name="nmea_rtk_driver"
+        output="screen">
+    <rosparam command="load" file="$(arg config)"/>
+    <param name="port" value="$(arg port)"/>
+    <param name="baud" value="$(arg baud)"/>
+  </node>
+</launch>

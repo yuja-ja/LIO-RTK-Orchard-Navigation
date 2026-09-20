@@ -1,0 +1,16 @@
+std_msgs/Header header
+time arrival_stamp
+string source_sentence
+string talker
+bool valid
+string selection_mode
+uint8 fix_dimension
+string[] satellite_ids
+uint16 satellites_used
+bool pdop_valid
+float64 pdop
+bool hdop_valid
+float64 hdop
+bool vdop_valid
+float64 vdop
+string system_id

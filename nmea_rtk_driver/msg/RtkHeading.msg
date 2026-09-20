@@ -1,0 +1,10 @@
+std_msgs/Header header
+time arrival_stamp
+string source_sentence
+string talker
+bool valid
+string mode
+float64 heading_true_deg
+float64 heading_true_rad
+float64 heading_std_deg
+bool covariance_from_receiver

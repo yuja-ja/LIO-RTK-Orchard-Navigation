@@ -1,0 +1,72 @@
+port: /dev/ttyUSB1
+baud: 115200
+serial_timeout_ms: 20
+reconnect_delay_sec: 1.0
+poll_rate_hz: 1000.0
+max_sentence_length: 1024
+publisher_queue: 100
+# Applied after baud-rate back-projection to the first '$' byte.
+timestamp_offset_sec: 0.0
+serial_bits_per_byte: 10.0
+
+frame_id: gnss_antenna
+velocity_frame_id: enu
+epoch_topic: /rtk/epoch
+fix_topic: /rtk/fix
+velocity_topic: /rtk/velocity
+heading_topic: /rtk/heading
+receiver_status_topic: /rtk/status
+time_reference_topic: /rtk/time_reference
+raw_topic: /rtk/raw_sentence
+diagnostics_topic: /diagnostics
+
+publish_raw: true
+require_checksum: true
+publish_invalid_fix: true
+publish_invalid_velocity: false
+publish_invalid_heading: true
+navsat_service_mask: 15
+
+# Recommended direct-observation set: GGA + GST + RMC. GNS remains available
+# as a fallback, but its F/R modes do not distinguish RTK fixed from float.
+position_source: auto
+preferred_position_sentence: gga
+velocity_source: rmc
+preferred_velocity_sentence: rmc
+utc_match_tolerance_sec: 0.05
+epoch_assembly_delay_sec: 0.08
+epoch_stale_timeout_sec: 0.50
+duplicate_retention_sec: 2.0
+vtg_match_window_sec: 0.15
+gsa_max_age_sec: 2.0
+
+use_gst_covariance: true
+# Keep an epoch open until matching GST/RMC arrives. A partial epoch is still
+# released after epoch_stale_timeout_sec so one missing sentence cannot stall.
+wait_for_gst: true
+wait_for_velocity: false
+gst_max_std_m: 100.0
+rtk_fixed_horizontal_std_m: 0.03
+rtk_fixed_vertical_std_m: 0.06
+rtk_float_horizontal_std_m: 0.30
+rtk_float_vertical_std_m: 0.60
+rtk_unspecified_horizontal_std_m: 0.50
+rtk_unspecified_vertical_std_m: 1.00
+differential_horizontal_std_m: 1.0
+differential_vertical_std_m: 2.0
+single_horizontal_std_m: 3.0
+single_vertical_std_m: 6.0
+unknown_horizontal_std_m: 10.0
+unknown_vertical_std_m: 20.0
+velocity_horizontal_std_mps: 0.20
+# NMEA RMC/VTG has no vertical velocity. Keep its variance deliberately large.
+velocity_vertical_std_mps: 100.0
+heading_std_deg: 2.0
+heading_valid_modes: A
+
+# auto prefers ZDA while it is present and falls back to the RMC date/time.
+time_reference_source: auto
+rmc_year_pivot: 80
+zda_preference_timeout_sec: 2.0
+diagnostic_period_sec: 5.0
+expected_epoch_rate_hz: 10.0
