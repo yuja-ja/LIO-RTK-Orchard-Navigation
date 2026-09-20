@@ -9,8 +9,6 @@
 This repository hosts the official implementation of the paper:  
 **"A LiDAR-Inertial-RTK Fusion Localization and Fruit-Tree Instance Mapping System for Tracked Inspection Robots in Non-Standardized Orchards"** *(Under Review at Computers and Electronics in Agriculture)*.
 
-Developed by the **College of Artificial Intelligence and Low-Altitude Technology, South China Agricultural University (SCAU)** and **Pazhou Lab, Guangzhou, China**.
-
 ---
 
 ## Table of Contents
