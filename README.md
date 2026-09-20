@@ -1,5 +1,10 @@
 # LIO-RTK-Orchard-Navigation
 
+[![Ubuntu](https://img.shields.io/badge/OS-Ubuntu%2020.04-orange.svg)](https://releases.ubuntu.com/20.04/)
+[![ROS](https://img.shields.io/badge/ROS-Noetic-blue.svg)](http://wiki.ros.org/noetic)
+[![Paper](https://img.shields.io/badge/Status-Under%20Review%20(COMPAG)-green.svg)]()
+[![Demo-Video](https://img.shields.io/badge/Video-YouTube%20%7C%20Bilibili-red.svg)](#video-demonstrations)
+
 This repository contains the system framework, configuration files, evaluation scripts, and semantic map outputs for the paper:  
 **"A LiDAR-Inertial-RTK Fusion Localization and Fruit-Tree Instance Mapping System for Tracked Inspection Robots in Non-Standardized Orchards"** (Under Review at *Computers and Electronics in Agriculture*).
 
