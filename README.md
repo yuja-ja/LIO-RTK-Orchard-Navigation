@@ -95,5 +95,7 @@ To systematically evaluate performance under canopy-induced signal anomalies, fo
 
 ## 6. Videos & Demonstrations
 
-* **Field Navigation Demonstration (YouTube)**: [https://www.youtube.com/watch?v=52Jc8SSe3pU](https://www.youtube.com/watch?v=52Jc8SSe3pU)
-* **Field Navigation Demonstration (Bilibili)**: [https://www.bilibili.com/video/BV1WUEQ6TEqa](https://www.bilibili.com/video/BV1WUEQ6TEqa)
+* **Initial Field Demonstration (YouTube)**: [https://www.youtube.com/watch?v=52Jc8SSe3pU](https://www.youtube.com/watch?v=52Jc8SSe3pU)
+* **Initial Field Demonstration (Bilibili)**: [https://www.bilibili.com/video/BV1WUEQ6TEqa](https://www.bilibili.com/video/BV1WUEQ6TEqa)
+
+> **Note**: The video links above showcase our initial system deployment and field trials. Updated demonstration videos featuring the comprehensive experimental sequences and controlled degradation evaluations corresponding to the revised manuscript are currently being finalized and will be uploaded shortly.
