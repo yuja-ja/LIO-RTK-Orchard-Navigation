@@ -96,20 +96,6 @@ python3 rtk_driver/scripts/eval_nav_smoothness.py
 
 ---
 
-## 5. Citation
-
-If our framework or datasets assist your research, please cite our paper:
-
-```bibtex
-@article{li2025liortk,
-  title={A LiDAR-Inertial-RTK Fusion Localization and Fruit-Tree Instance Mapping System for Tracked Inspection Robots in Non-Standardized Orchards},
-  author={Li, Author and Colleagues},
-  journal={Computers and Electronics in Agriculture},
-  year={2025},
-  note={Under Review}
-}
-```
-
 ---
 
 *We sincerely appreciate the editor's and reviewers' valuable time and constructive guidance.*
