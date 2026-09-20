@@ -34,7 +34,7 @@ This repository contains the software modules for a LiDAR-inertial-RTK fusion lo
 
 ## 2. Hardware & Software Specifications
 
-* **Operating System**: Ubuntu 18.04 (ROS Melodic) / Ubuntu 20.04 (ROS Noetic)
+* **Operating System**: Ubuntu 20.04 (ROS Noetic)
 * **Core Libraries**: PCL (>= 1.8), Eigen (>= 3.3.4), OpenMP, Python 3
 * **Onboard Computer**: Intel NUC 12 Pro (Intel Core i7-1260P, 16 GB RAM)
 * **LiDAR Sensor**: LSLiDAR C32 (32-channel mechanical LiDAR, 10 Hz)
