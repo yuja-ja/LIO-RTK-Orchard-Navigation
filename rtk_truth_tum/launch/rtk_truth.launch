@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="port" default="/dev/ttyUSB1"/>
+  <arg name="baud" default="115200"/>
+  <arg name="driver_config"
+       default="$(find nmea_rtk_driver)/config/nmea_rtk_driver.yaml"/>
+  <arg name="timestamp_offset_sec" default="0.0"/>
+
+  <group ns="rtk_truth">
+    <node pkg="nmea_rtk_driver"
+          type="nmea_rtk_driver_node"
+          name="nmea_driver"
+          output="screen">
+      <rosparam command="load" file="$(arg driver_config)"/>
+      <param name="port" value="$(arg port)"/>
+      <param name="baud" value="$(arg baud)"/>
+      <param name="timestamp_offset_sec"
+             value="$(arg timestamp_offset_sec)"/>
+
+      <param name="frame_id" value="rtk_truth_main_antenna"/>
+      <param name="velocity_frame_id" value="rtk_truth_enu"/>
+
+      <!-- Override the driver's absolute defaults with namespaced topics. -->
+      <param name="epoch_topic" value="epoch"/>
+      <param name="fix_topic" value="fix"/>
+      <param name="velocity_topic" value="velocity"/>
+      <param name="heading_topic" value="heading"/>
+      <param name="receiver_status_topic" value="status"/>
+      <param name="time_reference_topic" value="time_reference"/>
+      <param name="raw_topic" value="raw_sentence"/>
+      <param name="diagnostics_topic" value="diagnostics"/>
+    </node>
+  </group>
+</launch>
