@@ -29,30 +29,6 @@ GPGSA COM2 1
 GPZDA COM2 1
 ```
 
-`GPTHS` applies to the UM982 dual-antenna receiver. The command name uses the
-`GP` prefix, while a multi-constellation receiver may emit the corresponding
-sentence with a `GN` talker prefix. The parser accepts any talker prefix.
-
-`GNS` can replace or back up `GGA`; `VTG` can replace `RMC`. Do not configure
-both members of a pair as independent measurements. The driver assembles one
-epoch and selects only one position source and one velocity source.
-
-The documented `GNS` modes `F` (dynamic RTK) and `R` (static RTK) do not mean
-RTK float and fixed. They are published as `FIX_RTK_UNSPECIFIED=9`; the original
-mode string is retained. Use `GGA` quality 4/5 when fixed/float distinction is
-required.
-
-`GGAH`, `GNSH`, `GSTH`, `RMCH` and `VTGH` are secondary/from-antenna results.
-They are checksum-checked and counted, but are deliberately rejected from all
-primary position, velocity and epoch topics. They remain visible on the raw
-topic when `publish_raw` is enabled.
-
-`GSV`, `GBS`, `GRS`, `ROT` and other valid NMEA sentences are retained only on
-the raw topic in this package. They are not treated as independent ESIKF
-observations: `GSV` is signal diagnostics, `GBS/GRS` is integrity/residual
-diagnostics, and `ROT` lacks a receiver-provided covariance and clear
-independence from the navigation solution.
-
 ## Time semantics
 
 Measurement headers use ROS arrival time, not NMEA UTC. For each serial read,
@@ -87,51 +63,3 @@ the measurement header stamp.
 - `/diagnostics` (`diagnostic_msgs/DiagnosticArray`): rates, checksum/framing
   errors, reconnects, duplicate epochs and secondary-antenna rejection count.
 
-## Build and run
-
-Place this directory under the catkin workspace `src` directory, then run:
-
-```bash
-cd ~/FAST-LIRO
-catkin_make
-source devel/setup.bash
-roslaunch nmea_rtk_driver nmea_rtk_driver.launch \
-  port:=/dev/ttyUSB1 baud:=115200
-```
-
-The Linux user must have read/write permission for the serial device, normally
-through membership in the `dialout` group.
-
-Edit `config/nmea_rtk_driver.yaml` for source selection and noise values. The
-default `GGA + GST + RMC` selection is the recommended input for later RTK
-updates in the shared ESIKF. With `wait_for_gst` and `wait_for_velocity`
-enabled, the driver keeps an epoch open until the matching covariance and
-velocity arrive; it publishes a partial epoch only after
-`epoch_stale_timeout_sec`.
-
-## Tests
-
-Catkin runs the protocol test when testing is enabled:
-
-```bash
-catkin_make run_tests_nmea_rtk_driver
-catkin_test_results
-```
-
-The parser, epoch assembler and byte-stream framer have no ROS dependency and
-can also be tested directly:
-
-```bash
-g++ -std=c++14 -Wall -Wextra -Wpedantic -Werror \
-  -Inmea_rtk_driver/include \
-  nmea_rtk_driver/src/nmea_parser.cpp \
-  nmea_rtk_driver/src/epoch_assembler.cpp \
-  nmea_rtk_driver/test/nmea_protocol_test.cpp \
-  -o /tmp/nmea_protocol_test
-/tmp/nmea_protocol_test
-```
-
-The tests cover checksums, arbitrary talkers, all supported sentence types,
-GNS RTK semantics, secondary-antenna identification, UTC conversion, epoch
-de-duplication, source preference, cross-read framing, multiple sentences per
-read, leading garbage, malformed bytes, oversize recovery and bad checksums.
