@@ -1,0 +1,213 @@
+# Unified RTK fusion profile.
+#
+# This is the single formal parameter set for both the untouched bag and bags
+# containing injected RTK degradation. The fusion input topic is selected by
+# the launch file/remapping, never by changing this YAML. No degradation
+# window, seed, or scenario label is referenced here.
+
+common:
+    lid_topic:  "/point_cloud_raw"
+    imu_topic:  "/imu/data_raw"
+    time_sync_en: false
+    time_offset_lidar_to_imu: 0.0
+
+preprocess:
+    lidar_type: 5
+    scan_line: 32
+    scan_rate: 10
+    timestamp_unit: 0
+    blind: 1
+    # Optional vehicle-body exclusion box in the raw LiDAR frame.
+    # Order: [x_min, x_max, y_min, y_max, z_min, z_max], in metres.
+    blind_bbox_en: true
+    blind_bbox: [-3.0, 0.0, -0.8, 0.5, -0.8, 0.5]
+
+mapping:
+    acc_cov: 0.1
+    gyr_cov: 0.1
+    b_acc_cov: 0.0001
+    b_gyr_cov: 0.0001
+    fov_degree: 360
+    det_range: 100.0
+    extrinsic_est_en: false
+    extrinsic_T: [-0.054077, 0.090664, 0.131179]
+    extrinsic_R: [0.999818,  0.019088, -0.000266,
+                 -0.019080,  0.999660,  0.017745,
+                  0.000604, -0.017736,  0.999843]
+    # Generic local-observability state machine. These values are independent
+    # of the injected scenario and are used for both clean and degraded bags.
+    lidar_degradation_enabled: true
+    lidar_degraded_min_effective_points: 80
+    lidar_degraded_min_effective_ratio: 0.08
+    lidar_degraded_min_observability: 0.000001
+    lidar_degraded_trigger_scans: 5
+    lidar_recovery_good_scans: 10
+    lidar_recovery_confirm_scans: 5
+
+rtk:
+    enabled: true
+    fusion_mode: "global_transform"
+    epoch_topic: "/rtk/epoch"
+    heading_topic: "/rtk/heading"
+    global_frame_id: "enu"
+
+    # Prefer physical UTC measurement time. The 0.25 s fixed lag covers the
+    # measured serial parsing and epoch assembly latency in offline playback.
+    use_utc_measurement_time: true
+    max_utc_ros_offset_sec: 1.0
+    time_offset_sec: 0.0
+    heading_time_offset_sec: 0.0
+    wait_delay_sec: 0.25
+    timeout_sec: 1.0
+
+    # Confirmed IMU origin -> main antenna phase-center lever arm [m].
+    antenna_lever_arm_i: [-0.359494693, -0.277038077, -1.434709035]
+    # Main -> secondary antenna is physically IMU +Y. This calibrated unit
+    # vector retains the measured 0.524 degree horizontal installation offset.
+    heading_baseline_i: [0.005242561, 0.999986258, 0.000000000]
+
+    # Ellipsoid height is valid in this data set, so use full XYZ position.
+    # Heading is updated continuously. Position remains translation-only so
+    # lever-arm or timing errors cannot also rotate the global frame.
+    use_vertical_position: true
+    use_velocity: false
+    use_heading_updates: true
+    global_position_updates_yaw: false
+
+    require_heading_for_alignment: true
+    use_manual_yaw: false
+    manual_enu_to_world_yaw_deg: 0.0
+
+    # Match the fixed-only RTK truth extraction for a like-for-like A/B test.
+    allow_float: false
+    min_satellites: 10
+    max_hdop: 2.0
+    max_pdop: 3.5
+    # Differential age inflates the measurement covariance after this value;
+    # it no longer drops the complete RTK stream during replay/base outages.
+    max_differential_age_sec: 5.0
+    min_horizontal_std_m: 0.03
+    min_vertical_std_m: 0.06
+    velocity_std_mps: 0.20
+    heading_std_deg: 1.0
+    float_covariance_scale: 10.0
+
+    heading_match_window_sec: 0.15
+    heading_max_position_age_sec: 0.25
+
+    max_position_innovation_m: 5.0
+    max_velocity_innovation_mps: 3.0
+    max_heading_innovation_deg: 30.0
+    nis_gate: 25.0
+    position_nis_gate: 16.27
+    velocity_nis_gate: 13.82
+    heading_nis_gate: 10.83
+
+    # Stronger transform tracking than the runtime profile. These process
+    # noises let the ENU <- camera_init transform follow the same-source RTK
+    # without changing the local FAST-LIO state, deskew, or ikd-tree map.
+    # Keep the transform close to a rigid alignment.  A large random walk
+    # makes a smooth injected bias look like valid motion and lets the Kalman
+    # update follow it frame by frame.
+    # Healthy fixed RTK must retain the same strong global anchoring as the
+    # original non-robust estimator.  The temporal robust layer below, rather
+    # than a permanently weak prior, handles injected degradation.
+    global_initial_translation_std_m: 1.0
+    global_initial_yaw_std_deg: 10.0
+    global_translation_random_walk_m_sqrt_s: 0.10
+    global_yaw_random_walk_deg_sqrt_s: 1.0
+
+    # Robust temporal position protection.  The fixed segment reference is
+    # independent of the active transform, so a persistent position fault
+    # cannot be absorbed merely because each individual frame has a small
+    # residual.
+    robust_position_gate_enabled: true
+    # Only a large absolute jump is hard-rejected.  Ordinary segment/lag
+    # inconsistencies are handled as a bounded covariance inflation below.
+    max_position_residual_hard_m: 3.00
+    max_vertical_position_residual_m: 1.0
+    max_position_recovery_residual_m: 0.60
+    # Anomaly recovery must return close to the pre-fault absolute residual;
+    # this prevents a smooth bias from being mistaken for a transient clean
+    # sample while it is still growing.
+    # Return-to-clean tolerance must include ordinary FAST-LIO drift accrued
+    # during a long RTK fault interval.  Short/long displacement gates below
+    # remain active, so this is not a standalone acceptance gate.
+    max_position_recovery_return_residual_m: 0.60
+    max_position_recovery_lag_residual_m: 0.25
+    # Wider only for the first candidate after a genuine RTK dropout.  It does
+    # not move the transform; five seconds of displacement-consistent samples
+    # are still required before recovery.
+    max_position_outage_recovery_residual_m: 3.0
+    max_position_step_residual_m: 0.25
+    max_position_step_rate_mps: 0.75
+    # Generic change-point closure test. A quarantined step-like fault can
+    # recover when a later opposite edge approximately cancels the entry edge
+    # and is followed by position_quarantine_good_epochs normal increments.
+    # This uses neither a scenario label nor a known degradation window.
+    position_return_edge_min_ratio: 0.50
+    position_return_edge_max_ratio: 1.50
+    position_return_edge_closure_m: 0.35
+    position_segment_gate_m: 0.25
+    position_segment_drift_rate_mps: 0.001
+    position_segment_gate_max_m: 0.60
+    position_segment_refresh_sec: 5.0
+    position_history_timeout_sec: 2.0
+    position_quarantine_good_epochs: 5
+    # Conservative fixed-solution floors.  The same values are used for clean
+    # and injected-degradation bags; runtime quality/temporal gates handle the
+    # difference in observation quality.
+    min_fixed_horizontal_std_m: 0.03
+    min_fixed_vertical_std_m: 0.06
+    max_position_correction_m: 0.05
+    position_short_lag_sec: 1.0
+    position_long_lag_sec: 5.0
+    position_short_lag_gate_m: 0.30
+    position_long_lag_gate_m: 0.28
+    # Directional CUSUM catches a persistent, slowly varying position fault
+    # before its absolute offset reaches the hard gate. Random RTK noise
+    # changes direction and largely cancels in this vector accumulator.
+    position_cusum_deadband_m: 0.06
+    position_cusum_limit_m: 0.30
+    position_cusum_trigger_epochs: 5
+    position_history_max_samples: 120
+    # Soft temporal weighting: keep the global transform continuous during a
+    # smooth bias, while retaining a hard gate for a clearly discontinuous
+    # jump (ratio >= robust_hard_fault_ratio).
+    robust_soft_scale_gain: 10.0
+    robust_soft_scale_max: 1000.0
+    robust_soft_deadband_ratio: 1.25
+    robust_cusum_soft_factor: 0.75
+    robust_soft_activation_m: 0.35
+    robust_hard_fault_ratio: 3.0
+
+    # Short recovery is appropriate for controlled offline A/B playback. Do
+    # not copy these settings to production without outage/recovery testing.
+    min_good_epochs: 5
+    max_bad_epochs: 3
+    recovery_ramp_epochs: 5
+    recovery_initial_scale: 4.0
+
+    # When local LiDAR is degraded, RTK may correct only the global output
+    # transform. The correction is capped per epoch and RTK raw steps are
+    # checked independently, so a false-fixed solution cannot jump the map.
+    local_intervention_max_correction_m: 0.20
+    local_intervention_max_rtk_speed_mps: 3.0
+    local_intervention_step_margin_m: 0.25
+
+publish:
+    path_en: true
+    scan_publish_en: false
+    dense_publish_en: false
+    scan_bodyframe_pub_en: false
+
+pcd_save:
+    pcd_save_en: false
+    interval: -1
+
+trajectory_save:
+    tum_save_en: true
+    tum_file_path: ""
+    # Save the IMU/body pose in ENU. Convert this output to the main antenna
+    # with the confirmed lever arm before comparing to rtk_truth_antenna.tum.
+    save_lidar_pose: false
