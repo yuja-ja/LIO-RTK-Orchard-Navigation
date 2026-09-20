@@ -1,0 +1,24 @@
+<launch>
+  <arg name="port" default="/dev/ttyUSB0"/>
+  <arg name="baud" default="115200"/>
+  <arg name="topic" default="/imu/data_raw"/>
+  <arg name="frame_id" default="imu_link"/>
+  <arg name="timestamp_source" default="arrival"/>
+  <node pkg="imu_ros_driver"
+        type="imu_ros_driver_node"
+        name="imu_ros_driver"
+        output="screen"
+        respawn="true"
+        respawn_delay="1.0">
+    <param name="port" value="$(arg port)"/>
+    <param name="baud" value="$(arg baud)"/>
+    <param name="topic" value="$(arg topic)"/>
+    <param name="frame_id" value="$(arg frame_id)"/>
+    <param name="timestamp_source" value="$(arg timestamp_source)"/>
+    <param name="expected_rate_hz" value="200.0"/>
+    <param name="timestamp_offset_sec" value="0.0"/>
+    <param name="poll_rate_hz" value="1000.0"/>
+    <param name="serial_timeout_ms" value="20"/>
+    <param name="publisher_queue" value="1000"/>
+  </node>
+</launch>
